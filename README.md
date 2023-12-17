@@ -2,7 +2,7 @@
 
 ## Introduction
 
-See the [proposal](./proposal/proposal.pdf) for more details.
+See the [proposal](./proposal.pdf) for more details.
 
 ## Dataset
 
@@ -15,6 +15,6 @@ Refer to the [sample data](./sample-data.txt) for more details.
 To run the non-parallel BFS, use:
 
 ```bash
-stack --resolver lts-21.9 ghc -- --make -Wall -O naive-bfs
-./naive-bfs <filename>
+stack build
+stack run <filename>
 ```
