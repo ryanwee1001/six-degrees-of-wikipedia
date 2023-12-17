@@ -1,0 +1,7 @@
+# Compilation artefacts
+*.o
+*.hi
+
+# Executables
+naive-bfs
+parallel-bfs
