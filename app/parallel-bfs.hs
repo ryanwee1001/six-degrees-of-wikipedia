@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Lib (DirectedGraph, addEdge, emptyGraph, parallelBFSDriver)
+import Lib (DirectedGraph, Query, addEdge, emptyGraph, runQueries)
 
 import Control.Monad.Par (runPar)
 -- import System.Environment (getArgs)
@@ -16,9 +16,12 @@ sampleGraph =
   addEdge 3 4 $
   emptyGraph
 
+sampleQueries :: [Query]
+sampleQueries = [(0, 4), (0, 4), (0, 4), (1, 2), (1, 4)]
+
 main :: IO ()
 main = do
-    putStrLn $ show $ runPar $ parallelBFSDriver sampleGraph 0 4
+    putStrLn $ show $ runPar $ runQueries sampleGraph sampleQueries
     -- args <- getArgs
     -- case args of
     --     [filename] -> do

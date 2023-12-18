@@ -1,19 +1,23 @@
 module Lib
     ( Node,
       DirectedGraph,
+      Query,
       addEdge,
       emptyGraph,
-      parallelBFSDriver,
+      runQueries,
     ) where
 
-import Control.Monad.Par (Par, parMap)
+import Control.Monad.Par (Par, parMap, parMapM)
 import Data.Maybe (fromMaybe)
 
 import qualified Data.Set as Set
 import qualified Data.Map as Map
 
 type Node = Int
-type DirectedGraph = Map.Map Node (Set.Set Node) -- Adjacency list
+type DirectedGraph = Map.Map Node (Set.Set Node)    -- adjacency list
+type Query = (Int, Int)                             -- from, to
+
+{- ******** FOR PARALLELIZING BFS ******** -}
 
 addEdge :: Node -> Node -> DirectedGraph -> DirectedGraph
 addEdge from to = Map.insertWith Set.union from (Set.singleton to)
@@ -51,6 +55,12 @@ parallelBFS graph frontier visited dist target = do
 {-
     Does BFS to find single-source shortest path.
 -}
-parallelBFSDriver :: DirectedGraph -> Node -> Node -> Par Int
-parallelBFSDriver graph from to = do
-    parallelBFS graph [from] Set.empty 0 to
+parallelBFSDriver :: DirectedGraph -> Query -> Par Int
+parallelBFSDriver graph query = do
+    parallelBFS graph [fst query] Set.empty 0 (snd query)
+
+{- ******** FOR PARALLELIZING QUERIES ******** -}
+
+runQueries :: DirectedGraph -> [Query] -> Par [Int]
+runQueries graph queries = do
+    parMapM (parallelBFSDriver graph) queries
