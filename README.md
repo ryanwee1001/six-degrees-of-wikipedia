@@ -6,15 +6,13 @@ See the [proposal](./proposal.pdf) for more details.
 
 ## Dataset
 
-The graph should be represented as an adjacency matrix, where nodes are 0-indexed and each line contains the adjacencies as a comma-separated string.
-
-Refer to the [sample data](./sample-data.txt) for more details.
+Currently, the BFS is done on a sample graph hardcoded in [parallel-bfs.hs](./app/parallel-bfs.hs).
 
 ## Usage
 
-To run the non-parallel BFS, use:
+To run the parallelized BFS, use:
 
 ```bash
 stack build
-stack run <filename>
+stack run +RTS -N<num-cores>
 ```
