@@ -2,10 +2,13 @@ module Lib
     ( Node,
       DirectedGraph,
       Query,
+      edgesFile,
+      nodesFile,
+      queriesFile,
       addEdge,
       emptyGraph,
       runQueries,
-      readBinaryFiletoIO
+      readBinaryFiletoIO,
     ) where
 
 import Control.Monad (replicateM)
@@ -21,6 +24,17 @@ import qualified Data.Map as Map
 type Node = Int
 type DirectedGraph = Map.Map Node (Set.Set Node)    -- adjacency list
 type Query = (Int, Int)                             -- from, to
+
+{- ******** HARDCODED FILEPATHS ******** -}
+
+edgesFile :: FilePath
+edgesFile = "../data/wikigraph.edges"
+
+nodesFile :: FilePath
+nodesFile = "../data/wikigraph.nodes"
+
+queriesFile :: FilePath
+queriesFile = "../data/wikigraph.queries"
 
 {- ******** FOR PARALLELIZING BFS ******** -}
 
