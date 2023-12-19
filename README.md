@@ -11,7 +11,7 @@ The program uses three data files:
 - \<nodesFile\>: The mapping from node names to node integer IDs
 - \<queriesFile\>: The queries to execute
 
-The filepaths for these three files are hardcoded in [Lib.hs](./src/Lib.hs).
+The filepaths for these three files are hardcoded in [parallel-bfs.hs](./app/parallel-bfs.hs).
 
 ## Usage
 
