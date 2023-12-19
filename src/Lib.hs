@@ -23,12 +23,6 @@ type Query = (Int, Int)                             -- from, to
 
 {- ******** FOR PARALLELIZING BFS ******** -}
 
-addEdge :: Node -> Node -> DirectedGraph -> DirectedGraph
-addEdge from to = Map.insertWith Set.union from (Set.singleton to)
-
-emptyGraph :: DirectedGraph
-emptyGraph = Map.empty
-
 getNeighbors :: DirectedGraph -> Node -> Set.Set Node
 getNeighbors graph node = fromMaybe Set.empty $ Map.lookup node graph
 
