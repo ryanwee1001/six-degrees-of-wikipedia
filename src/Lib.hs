@@ -5,11 +5,16 @@ module Lib
       addEdge,
       emptyGraph,
       runQueries,
+      readBinaryFiletoIO
     ) where
 
+import Control.Monad (replicateM)
 import Control.Monad.Par (Par, parMap, parMapM)
+import Data.Binary (Word32)
+import Data.Binary.Get (getWord32le, runGet)
 import Data.Maybe (fromMaybe)
 
+import qualified Data.ByteString.Lazy as BL
 import qualified Data.Set as Set
 import qualified Data.Map as Map
 
@@ -64,3 +69,24 @@ parallelBFSDriver graph query = do
 runQueries :: DirectedGraph -> [Query] -> Par [Int]
 runQueries graph queries = do
     parMapM (parallelBFSDriver graph) queries
+
+{- ******** FOR PARSING DATASET ******** -}
+
+intListToTupleList :: [Int] -> Int -> Bool -> [(Int, Set.Set Int)]
+intListToTupleList [] _ _ =[]
+intListToTupleList (x:ns) cur_idx del | del = intListToTupleList ns (cur_idx+1) False
+                                      | otherwise = (cur_idx, Set.fromList neighbors) :
+                                                intListToTupleList xs cur_idx True
+                                            where (neighbors,xs) = span (/=0) (x:ns)
+
+parseListToMap :: [Word32] -> Map.Map Int (Set.Set Int)
+parseListToMap x = Map.fromList
+                    (intListToTupleList (Prelude.map fromIntegral x) 1 False)
+
+readBinaryFiletoIO :: FilePath -> IO (Map.Map Int (Set.Set Int))
+readBinaryFiletoIO filePath = do
+    -- Read the binary file into a lazy ByteString
+    fileContents <- BL.readFile filePath
+    return $ parseListToMap $
+        runGet (replicateM (fromIntegral $ BL.length fileContents `div` 4)
+        getWord32le) fileContents

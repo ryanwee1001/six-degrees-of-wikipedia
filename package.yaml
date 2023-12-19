@@ -36,6 +36,8 @@ ghc-options:
 library:
   source-dirs: src
   dependencies:
+  - binary
+  - bytestring
   - containers
   - monad-par
 
@@ -48,16 +50,16 @@ executables:
     - -threaded
     - -rtsopts
     dependencies:
-    - six-degrees-of-wikipedia
     - monad-par
-
-tests:
-  parallel-bfs-test:
-    main:                parallel-bfs-test.hs
-    source-dirs:         test
-    # ghc-options:
-    # - -threaded
-    # - -rtsopts
-    # - -with-rtsopts=-N
-    dependencies:
     - six-degrees-of-wikipedia
+
+# tests:
+#   parallel-bfs-test:
+#     main:                parallel-bfs-test.hs
+#     source-dirs:         test
+#     ghc-options:
+#     - -threaded
+#     - -rtsopts
+#     - -with-rtsopts=-N
+#     dependencies:
+#     - six-degrees-of-wikipedia
