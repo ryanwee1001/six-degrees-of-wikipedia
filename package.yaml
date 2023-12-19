@@ -36,11 +36,12 @@ ghc-options:
 library:
   source-dirs: src
   dependencies:
+  - aeson
   - binary
   - bytestring
   - containers
   - monad-par
-  - aeson
+  - split
 
 executables:
   parallel-bfs:

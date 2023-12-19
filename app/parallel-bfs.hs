@@ -1,21 +1,29 @@
 module Main (main) where
 
 import Lib (
-    Query,
-    edgesFile,
-    -- nodesFile,
-    -- queriesFile,
     runQueries,
-    readBinaryFiletoIO)
+    readBinaryFileToGraph,
+    readJSONFileToNodes,
+    readCSVFileToQueries)
 
 import Control.Monad.Par (runPar)
 
-sampleQueries :: [Query]
-sampleQueries = [(3334, 3431), (3431, 730813), (3334, 730813), (3334, 0)]
--- Should give: 1, 1, 2, -1
+{- ******** START DATA FILES ******** -}
+
+edgesFile :: FilePath
+edgesFile = "data/wikigraph.edges"
+
+nodesFile :: FilePath
+nodesFile = "data/wikigraph.nodes"
+
+queriesFile :: FilePath
+queriesFile = "data/wikigraph.queries"
+
+{- ******** END DATA FILES ******** -}
 
 main :: IO ()
 main = do
-    graph <- readBinaryFiletoIO edgesFile
-    putStrLn "Finished reading graph into memory!"
-    putStrLn $ show $ runPar $ runQueries graph sampleQueries
+    graph <- readBinaryFileToGraph edgesFile
+    nodes <- readJSONFileToNodes nodesFile
+    queries <- readCSVFileToQueries queriesFile nodes
+    putStrLn $ show $ runPar $ runQueries graph queries
