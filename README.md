@@ -19,5 +19,5 @@ To run the parallelized BFS, use:
 
 ```bash
 stack build
-stack run +RTS -N<num-cores>
+stack run -- +RTS -N<num-cores>
 ```
