@@ -35,8 +35,12 @@ getNeighbors graph node = fromMaybe Set.empty $ Map.lookup node graph
     @param visited  nodes that have been visited (including those in frontier)
     @param dist     distance to nodes in the current frontier
     @param target   target node
+
+    Note that we limit our BFS depth to 6, so that we don't go on forever.
 -}
 parallelBFS :: DirectedGraph -> [Node] -> Set.Set Node -> Int -> Node -> Par Int
+parallelBFS _ _ _ 6 _ = do
+    return (-1)
 parallelBFS graph frontier visited dist target = do
     neighbors <- parMap (getNeighbors graph) frontier
     let tmpFrontier = Set.unions neighbors
