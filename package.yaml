@@ -54,7 +54,6 @@ executables:
     dependencies:
     - monad-par
     - containers
-    # - deepseq
     - six-degrees-of-wikipedia
 
 tests:

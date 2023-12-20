@@ -8,7 +8,6 @@ import Lib (
 
 import qualified Data.Map as Map
 
--- import Control.DeepSeq (deepseq, NFData)
 import Control.Monad.Par (runPar)
 import System.CPUTime (getCPUTime)
 
@@ -25,32 +24,29 @@ queriesFile = "data/wikigraph.queries"
 
 {- ******** END DATA FILES ******** -}
 
--- forceEvaluationOfMap :: (NFData k, NFData v) => Map.Map k v -> ()
--- forceEvaluationOfMap m = Map.foldlWithKey (\_ k v -> k `deepseq` v `deepseq` ()) () m
+forceEvaluationOfMap :: Map.Map k v -> ()
+forceEvaluationOfMap m = Map.foldlWithKey (\_ k v -> k `seq` v `seq` ()) () m
 
--- forceEvaluationOfList :: (NFData a) => [a] -> ()
--- forceEvaluationOfList l = foldl (\_ x -> x `deepseq` ()) () l
+forceEvaluationOfList :: [a] -> ()
+forceEvaluationOfList l = foldl (\_ x -> x `seq` ()) () l
 
 main :: IO ()
 main = do
-    graph <- readBinaryFileToGraph edgesFile
+    edges <- readBinaryFileToGraph edgesFile
     nodes <- readJSONFileToNodes nodesFile
     queries <- readCSVFileToQueries queriesFile nodes
 
-    -- Force the full evaluation of graph / nodes / queries, so that we don't
+    -- Force the full evaluation of edges / nodes / queries, so that we don't
     -- include I/O in our timing results.
-    --
-    -- TODO: Don't rely on Map.size / length, which might not fully evaluate the
-    --       data structures.
-    putStrLn $ "Loaded " ++ (show $ Map.size graph) ++ " Edges"
-    putStrLn $ "Loaded " ++ (show $ Map.size nodes) ++ " Nodes"
-    putStrLn $ "Loaded " ++ (show $ length queries) ++ " Queries"
-    -- let _ = (forceEvaluationOfMap graph) `deepseq` ()
-    -- let _ = (forceEvaluationOfMap nodes) `deepseq` ()
-    -- let _ = (forceEvaluationOfList queries) `deepseq` ()
+    let resE = forceEvaluationOfMap edges
+    let resN = forceEvaluationOfMap nodes
+    let resQ = forceEvaluationOfList queries
+    putStrLn $ "Edges loaded: " ++ show (resE == ())
+    putStrLn $ "Nodes loaded: " ++ show (resN == ())
+    putStrLn $ "Queries loaded: " ++ show (resQ == ())
 
     start <- getCPUTime
-    putStrLn $ show $ runPar $ runQueries graph queries
+    putStrLn $ "Results: " ++ (show $ runPar $ runQueries edges queries)
     end <- getCPUTime
     let runtime = (end - start) `div` 1000000 -- us
     putStrLn $ "Runtime: " ++ show runtime ++ " us"

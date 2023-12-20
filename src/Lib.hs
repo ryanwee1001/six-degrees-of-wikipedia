@@ -27,6 +27,18 @@ type Query = (Int, Int)                             -- from, to
 getNeighbors :: DirectedGraph -> Node -> Set.Set Node
 getNeighbors graph node = fromMaybe Set.empty $ Map.lookup node graph
 
+-- Does union on a list of sets in parallel
+parallelUnion :: Ord a => [Set.Set a] -> Par (Set.Set a)
+parallelUnion [] = do
+    return Set.empty
+parallelUnion [s] = do
+    return s
+parallelUnion sets = do
+    let (half1, half2) = splitAt (length sets `div` 2) sets
+    mergedHalf1 <- parallelUnion half1
+    mergedHalf2 <- parallelUnion half2
+    return $ Set.union mergedHalf1 mergedHalf2
+
 {-
     Recursive function for BFS that is executed in parallel.
 
@@ -43,7 +55,7 @@ parallelBFS _ _ _ 6 _ = do
     return (-1)
 parallelBFS graph frontier visited dist target = do
     neighbors <- parMap (getNeighbors graph) frontier
-    let tmpFrontier = Set.unions neighbors
+    tmpFrontier <- parallelUnion neighbors
     let nextFrontierSet = Set.difference tmpFrontier visited 
     if null nextFrontierSet then
         return (-1)
@@ -70,6 +82,8 @@ runQueries graph queries = do
 
 {- ******** FOR PARSING EDGES ******** -}
 
+-- TODO: Optimize these!
+
 intListToTupleList :: [Int] -> Int -> Bool -> [(Int, Set.Set Int)]
 intListToTupleList [] _ _ =[]
 intListToTupleList (x:ns) cur_idx del | del = intListToTupleList ns (cur_idx+1) False
@@ -91,6 +105,8 @@ readBinaryFileToGraph filePath = do
 
 {- ******** FOR PARSING NODES ******** -}
 
+-- TODO: Optimize these!
+
 readJSONFileToNodes :: FilePath -> IO (Map.Map String Int)
 readJSONFileToNodes f = do
   n <- NodeParser.parseFile f
@@ -99,6 +115,8 @@ readJSONFileToNodes f = do
     Right n2 -> NodeParser.nodes n2
 
 {- ******** FOR PARSING QUERIES ******** -}
+
+-- TODO: Optimize these!
 
 {-
     Queries should be represented as (<from-page>,<to-page>)
