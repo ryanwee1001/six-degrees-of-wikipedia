@@ -1,10 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module NodeParser (parseFile) where
+module NodeParser (parseFile, ParsedNodes(..)) where
 
 import qualified Data.ByteString.Lazy as B
 import Data.Aeson
-import Data.Aeson.KeyMap (toMap, KeyMap)
 import GHC.Generics
 import qualified Data.Map as Map
 

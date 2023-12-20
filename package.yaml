@@ -53,6 +53,7 @@ executables:
     - -rtsopts
     dependencies:
     - monad-par
+    - containers
     - six-degrees-of-wikipedia
 
 tests:

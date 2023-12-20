@@ -6,6 +6,8 @@ import Lib (
     readJSONFileToNodes,
     readCSVFileToQueries)
 
+import qualified Data.Map as Map
+
 import Control.Monad.Par (runPar)
 
 {- ******** START DATA FILES ******** -}
@@ -25,5 +27,6 @@ main :: IO ()
 main = do
     graph <- readBinaryFileToGraph edgesFile
     nodes <- readJSONFileToNodes nodesFile
+    putStrLn "Loaded " ++ (show $ Map.size nodes) ++ " Nodes"
     queries <- readCSVFileToQueries queriesFile nodes
     putStrLn $ show $ runPar $ runQueries graph queries

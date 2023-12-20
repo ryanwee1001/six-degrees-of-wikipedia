@@ -11,6 +11,7 @@ import Data.Binary (Word32)
 import Data.Binary.Get (getWord32le, runGet)
 import Data.List.Split (splitOn)
 import Data.Maybe (fromMaybe)
+import qualified NodeParser
 
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.Map as Map
@@ -87,9 +88,11 @@ readBinaryFileToGraph filePath = do
 {- ******** FOR PARSING NODES ******** -}
 
 readJSONFileToNodes :: FilePath -> IO (Map.Map String Int)
-readJSONFileToNodes _ = do
-    -- TODO: Implement this.
-    return Map.empty
+readJSONFileToNodes f = do
+  n <- NodeParser.parseFile f
+  return $ case n of
+    Left err -> error err
+    Right n2 -> NodeParser.nodes n2
 
 {- ******** FOR PARSING QUERIES ******** -}
 
