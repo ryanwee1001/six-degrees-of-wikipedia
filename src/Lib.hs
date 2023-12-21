@@ -6,7 +6,8 @@ module Lib
     ) where
 
 import Control.Monad (replicateM)
-import Control.Monad.Par (Par, parMap, parMapM)
+import Control.Monad.Par (Par, parMapM)
+import Control.Parallel.Strategies (parMap, rpar)
 import Data.Binary (Word32)
 import Data.Binary.Get (getWord32le, runGet)
 import Data.List.Split (splitOn)
@@ -54,7 +55,7 @@ parallelBFS :: DirectedGraph -> [Node] -> Set.Set Node -> Int -> Node -> Par Int
 parallelBFS _ _ _ 6 _ = do
     return (-1)
 parallelBFS graph frontier visited dist target = do
-    neighbors <- parMap (getNeighbors graph) frontier
+    let neighbors = (parMap rpar (getNeighbors graph) frontier)
     tmpFrontier <- parallelUnion neighbors
     let nextFrontierSet = Set.difference tmpFrontier visited 
     if null nextFrontierSet then

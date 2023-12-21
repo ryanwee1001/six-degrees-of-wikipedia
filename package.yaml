@@ -42,6 +42,7 @@ library:
   - containers
   - monad-par
   - split
+  - parallel
 
 executables:
   parallel-bfs:
